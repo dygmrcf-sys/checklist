@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Department Checklist</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --border: #e0ddd6;
+    --accent: #2563eb;
+    --text: #1a1916;
+    --text-muted: #9a9589;
+    --struck: #c5c2bb;
+    --red: #dc2626;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 40px 16px;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  header {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  h1 {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: var(--text);
+  }
+
+  .counter {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .counter em { color: var(--accent); font-style: normal; }
+
+  /* Card */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+
+  /* List */
+  .list { list-style: none; }
+
+  .list-item {
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+  }
+
+  .list-item:last-child { border-bottom: none; }
+
+  .item-btn {
+    flex: 1;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    text-align: left;
+    transition: background 0.15s;
+    min-width: 0;
+  }
+
+  .item-btn:hover { background: #f9f8f6; }
+
+  .item-check {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    border: 1.5px solid var(--border);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, border-color 0.15s;
+    font-size: 10px;
+    color: white;
+  }
+
+  .list-item.struck .item-check {
+    background: var(--struck);
+    border-color: var(--struck);
+  }
+
+  .item-text {
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text);
+    letter-spacing: 0.02em;
+    transition: color 0.2s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .list-item.struck .item-text {
+    color: var(--struck);
+    text-decoration: line-through;
+    text-decoration-color: var(--struck);
+  }
+
+  .del-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--border);
+    font-size: 13px;
+    padding: 10px 12px 10px 4px;
+    line-height: 1;
+    flex-shrink: 0;
+    transition: color 0.15s;
+  }
+
+  .list-item:hover .del-btn { color: var(--text-muted); }
+  .del-btn:hover { color: var(--red) !important; }
+
+  /* Add row */
+  .add-row {
+    display: flex;
+    border-top: 1px solid var(--border);
+    background: #fafaf8;
+  }
+
+  .add-input {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    padding: 10px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--text);
+    caret-color: var(--accent);
+  }
+
+  .add-input::placeholder { color: var(--border); }
+
+  .add-submit {
+    background: none;
+    border: none;
+    border-left: 1px solid var(--border);
+    padding: 0 14px;
+    cursor: pointer;
+    color: var(--accent);
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 1;
+    transition: background 0.15s;
+  }
+
+  .add-submit:hover { background: #eff6ff; }
+
+  /* Footer actions */
+  .footer {
+    margin-top: 10px;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .clear-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 0;
+    transition: color 0.15s;
+  }
+
+  .clear-btn:hover { color: var(--red); }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .new-item { animation: fadeIn 0.2s ease; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>Departments</h1>
+    <span class="counter" id="counter"></span>
+  </header>
+
+  <div class="card">
+    <ul class="list" id="list"></ul>
+    <div class="add-row">
+      <input class="add-input" id="addInput" type="text" placeholder="Add department…" maxlength="40" autocomplete="off" />
+      <button class="add-submit" onclick="addItem()" title="Add">+</button>
+    </div>
+  </div>
+
+  <div class="footer">
+    <button class="clear-btn" onclick="clearStruck()">Clear struck</button>
+  </div>
+</div>
+
+<script>
+  const DEFAULTS = [
+    "MECHANICAL","ELECTRICAL","STORES","GENERAL",
+    "MEDICAL","VIGILANCE","RPF","PERSONNEL","ACCOUNTS"
+  ];
+
+  let items = JSON.parse(localStorage.getItem('cl_items') || 'null') || 
+    DEFAULTS.map((t, i) => ({ id: i+1, text: t, struck: false }));
+  let nextId = Math.max(...items.map(i => i.id)) + 1;
+
+  function save() {
+    localStorage.setItem('cl_items', JSON.stringify(items));
+  }
+
+  function render() {
+    const list = document.getElementById('list');
+    const existing = {};
+    list.querySelectorAll('.list-item').forEach(el => {
+      existing[el.dataset.id] = el;
+    });
+
+    // Remove deleted
+    Object.keys(existing).forEach(id => {
+      if (!items.find(i => i.id == id)) existing[id].remove();
+    });
+
+    // Update/add
+    items.forEach((item, idx) => {
+      let el = existing[item.id];
+      if (!el) {
+        el = document.createElement('li');
+        el.className = 'list-item' + (item._new ? ' new-item' : '');
+        el.dataset.id = item.id;
+        el.innerHTML = `
+          <button class="item-btn" onclick="toggleStrike(${item.id})">
+            <span class="item-check"></span>
+            <span class="item-text">${item.text}</span>
+          </button>
+          <button class="del-btn" onclick="deleteItem(${item.id})" title="Remove">✕</button>
+        `;
+        list.appendChild(el);
+        delete item._new;
+      } else {
+        el.querySelector('.item-text').textContent = item.text;
+        el.querySelector('.item-btn').onclick = () => toggleStrike(item.id);
+        el.querySelector('.del-btn').onclick = () => deleteItem(item.id);
+      }
+      el.className = 'list-item' + (item.struck ? ' struck' : '');
+    });
+
+    updateCounter();
+  }
+
+  function updateCounter() {
+    const total = items.length;
+    const struck = items.filter(i => i.struck).length;
+    document.getElementById('counter').innerHTML =
+      struck ? `<em>${struck}</em> / ${total} done` : `${total} items`;
+  }
+
+  function toggleStrike(id) {
+    const item = items.find(i => i.id === id);
+    if (!item) return;
+    item.struck = !item.struck;
+    save();
+    const el = document.querySelector(`[data-id="${id}"]`);
+    if (el) {
+      el.classList.toggle('struck', item.struck);
+      const check = el.querySelector('.item-check');
+      if (check) check.textContent = item.struck ? '✓' : '';
+    }
+    updateCounter();
+  }
+
+  function deleteItem(id) {
+    const el = document.querySelector(`[data-id="${id}"]`);
+    if (el) {
+      el.style.transition = 'opacity 0.2s, transform 0.2s';
+      el.style.opacity = '0';
+      el.style.transform = 'translateX(20px)';
+      setTimeout(() => {
+        items = items.filter(i => i.id !== id);
+        save();
+        render();
+      }, 200);
+    }
+  }
+
+  function addItem() {
+    const input = document.getElementById('addInput');
+    const text = input.value.trim().toUpperCase();
+    if (!text) { input.focus(); return; }
+    items.push({ id: nextId++, text, struck: false, _new: true });
+    save();
+    render();
+    input.value = '';
+    input.focus();
+  }
+
+  function clearStruck() {
+    items = items.filter(i => !i.struck);
+    save();
+    render();
+  }
+
+  document.getElementById('addInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') addItem();
+  });
+
+  render();
+</script>
+</body>
+</html>
