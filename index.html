@@ -346,12 +346,14 @@ function render() {
   const pf = document.getElementById('f-pri').value;
   const q  = document.getElementById('f-search').value.toLowerCase();
 
+  const priOrder = { 'High': 1, 'Medium': 2, 'Low': 3 };
+
   const filtered = items.filter(i => {
     if (sf && i.status !== sf) return false;
     if (pf && i.pri    !== pf) return false;
     if (q  && !i.desc.toLowerCase().includes(q)) return false;
     return true;
-  });
+  }).sort((a, b) => (priOrder[a.pri] || 9) - (priOrder[b.pri] || 9));
 
   document.getElementById('s-total').textContent = items.length;
   document.getElementById('s-done' ).textContent = items.filter(i => i.status === 'Done').length;
