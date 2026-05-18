@@ -3,341 +3,414 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Department Checklist</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>GM Action Monitoring System — Civil Engineering</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
-  :root {
-    --bg: #f5f4f0;
-    --surface: #ffffff;
-    --border: #e0ddd6;
-    --accent: #2563eb;
-    --text: #1a1916;
-    --text-muted: #9a9589;
-    --struck: #c5c2bb;
-    --red: #dc2626;
-  }
+:root {
+  --ink: #1a1a2e; --ink-light: #4a4a6a; --ink-faint: #8888aa;
+  --rail-blue: #003580; --rail-gold: #c8a84b; --rail-red: #8b1a1a;
+  --bg: #f5f2eb; --surface: #faf8f3; --border: #d4cfc2;
+  --green: #2d6a2d; --green-bg: #eaf3ea;
+  --amber: #7a5200; --amber-bg: #fdf3dc;
+  --red: #8b1a1a; --red-bg: #faeaea;
+  --blue: #003580; --blue-bg: #e8eef8;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: #e8e4da; min-height: 100vh; color: var(--ink); }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+.screen-controls {
+  background: var(--rail-blue); padding: 10px 28px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+}
+.app-title { color: #fff; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 10px; }
+.sync-status { font-size: 11px; padding: 3px 10px; border-radius: 12px; font-weight: 500; }
+.sync-ok   { background: rgba(45,106,45,0.35);  color: #adf5ad; }
+.sync-err  { background: rgba(139,26,26,0.4);   color: #ffc5c5; }
+.sync-load { background: rgba(200,168,75,0.3);  color: #ffeaa0; }
+.ctrl-group { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.ctrl-group select, .ctrl-group input {
+  font-family: 'DM Sans', sans-serif; font-size: 12px; padding: 5px 10px;
+  border-radius: 4px; border: 1px solid rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.12); color: #fff; height: 30px; outline: none;
+}
+.ctrl-group select option { color: var(--ink); background: #fff; }
+.ctrl-group input::placeholder { color: rgba(255,255,255,0.5); }
+.btn {
+  font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500;
+  padding: 5px 14px; border-radius: 4px; border: none; cursor: pointer;
+  height: 30px; display: inline-flex; align-items: center; gap: 6px;
+  transition: opacity 0.15s; white-space: nowrap;
+}
+.btn:hover { opacity: 0.85; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-gold    { background: var(--rail-gold); color: #1a1200; }
+.btn-outline { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.5); }
+.btn-green   { background: #2d6a2d; color: #fff; }
+.btn-teal    { background: #0f766e; color: #fff; }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    padding: 40px 16px;
-  }
+.info-bar {
+  background: #e8eef8; border-bottom: 1px solid #c5d4ef;
+  padding: 7px 28px; font-size: 12px; color: var(--blue);
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+.info-bar strong { font-weight: 600; }
+.sheet-hint {
+  background: #fff; border: 1px solid #c5d4ef; border-radius: 4px;
+  padding: 2px 8px; font-family: monospace; font-size: 11px; color: #333;
+}
 
-  .container {
-    width: 100%;
-    max-width: 400px;
-  }
+.page-wrap { display: flex; justify-content: center; padding: 28px 16px 60px; }
+#a4page {
+  width: 794px; min-height: 1123px;
+  background: var(--surface); position: relative;
+  box-shadow: 0 4px 40px rgba(0,0,0,0.18);
+}
+.rail-stripe { height: 6px; background: linear-gradient(90deg, var(--rail-blue) 0%, var(--rail-blue) 70%, var(--rail-gold) 70%, var(--rail-gold) 85%, var(--rail-red) 85%, var(--rail-red) 100%); }
 
-  header {
-    margin-bottom: 20px;
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 12px;
-  }
+.page-header { padding: 20px 36px 14px; border-bottom: 0.5px solid var(--border); display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.org-name { font-family: 'EB Garamond', serif; font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--rail-blue); margin-bottom: 4px; }
+.doc-title { font-family: 'EB Garamond', serif; font-size: 26px; font-weight: 500; color: var(--ink); line-height: 1.15; }
+.doc-subtitle { font-size: 12px; color: var(--ink-light); margin-top: 3px; }
+.header-meta { font-size: 11px; color: var(--ink-faint); line-height: 1.9; text-align: right; }
+.header-meta strong { color: var(--ink-light); }
 
-  h1 {
-    font-size: 18px;
-    font-weight: 600;
-    letter-spacing: 0.01em;
-    color: var(--text);
-  }
+.summary-strip { display: flex; padding: 10px 36px; border-bottom: 0.5px solid var(--border); background: #f0ece0; }
+.stat-box { flex: 1; text-align: center; padding: 7px 4px; border-right: 0.5px solid var(--border); }
+.stat-box:last-child { border-right: none; }
+.stat-num { font-family: 'EB Garamond', serif; font-size: 28px; font-weight: 500; line-height: 1; }
+.stat-label { font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-faint); margin-top: 3px; }
+.stat-total .stat-num { color: var(--rail-blue); }
+.stat-done  .stat-num { color: var(--green); }
+.stat-prog  .stat-num { color: var(--amber); }
+.stat-delay .stat-num { color: var(--red); }
 
-  .counter {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: var(--text-muted);
-    white-space: nowrap;
-  }
+.table-wrap { padding: 0 36px 20px; }
+.section-label {
+  font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint);
+  padding: 14px 0 8px; border-bottom: 1.5px solid var(--ink);
+  display: flex; align-items: center; justify-content: space-between;
+}
+table { width: 100%; border-collapse: collapse; }
+th { font-size: 9px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-faint); padding: 6px 6px 6px 0; text-align: left; white-space: nowrap; }
+td { font-size: 11px; padding: 7px 6px 7px 0; border-bottom: 0.5px solid var(--border); vertical-align: top; color: var(--ink); line-height: 1.4; }
+tr:last-child td { border-bottom: none; }
+tr.row-alt td { background: rgba(0,0,0,0.018); }
 
-  .counter em { color: var(--accent); font-style: normal; }
+.badge { display: inline-block; font-size: 9px; font-weight: 500; padding: 2px 7px; border-radius: 2px; letter-spacing: 0.04em; white-space: nowrap; }
+.b-pending    { background: var(--amber-bg); color: var(--amber); }
+.b-inprogress { background: var(--blue-bg);  color: var(--blue); }
+.b-done       { background: var(--green-bg); color: var(--green); }
+.b-delayed    { background: var(--red-bg);   color: var(--red); }
+.b-high       { background: var(--red-bg);   color: var(--red); border: 0.5px solid var(--red); }
+.b-medium     { background: var(--amber-bg); color: var(--amber); }
+.b-low        { background: var(--green-bg); color: var(--green); }
 
-  /* Card */
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-  }
+.pct-bar  { height: 4px; border-radius: 2px; background: #e0ddd5; margin-top: 3px; overflow: hidden; width: 60px; }
+.pct-fill { height: 100%; border-radius: 2px; }
+.overdue-tag { font-size: 9px; color: var(--red); display: block; }
 
-  /* List */
-  .list { list-style: none; }
+.loading-overlay {
+  position: absolute; inset: 0; background: rgba(250,248,243,0.9);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; z-index: 10;
+}
+.spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--rail-blue); border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { font-size: 13px; color: var(--ink-light); }
+.empty-state { text-align: center; padding: 40px 0; color: var(--ink-faint); font-size: 13px; }
 
-  .list-item {
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-  }
+.sig-section { padding: 18px 36px 24px; border-top: 0.5px solid var(--border); margin-top: 8px; display: flex; justify-content: space-between; align-items: flex-end; }
+.sig-block { text-align: center; min-width: 140px; }
+.sig-line { border-top: 0.5px solid var(--ink); padding-top: 6px; font-size: 10px; color: var(--ink-light); margin-top: 36px; letter-spacing: 0.04em; }
+.sig-designation { font-size: 9px; color: var(--ink-faint); margin-top: 2px; }
+.page-footer { text-align: center; font-size: 9px; color: var(--ink-faint); padding: 10px 36px 14px; letter-spacing: 0.06em; border-top: 0.5px solid var(--border); }
 
-  .list-item:last-child { border-bottom: none; }
-
-  .item-btn {
-    flex: 1;
-    background: none;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 14px;
-    text-align: left;
-    transition: background 0.15s;
-    min-width: 0;
-  }
-
-  .item-btn:hover { background: #f9f8f6; }
-
-  .item-check {
-    width: 16px;
-    height: 16px;
-    border-radius: 4px;
-    border: 1.5px solid var(--border);
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.15s, border-color 0.15s;
-    font-size: 10px;
-    color: white;
-  }
-
-  .list-item.struck .item-check {
-    background: var(--struck);
-    border-color: var(--struck);
-  }
-
-  .item-text {
-    font-size: 13.5px;
-    font-weight: 500;
-    color: var(--text);
-    letter-spacing: 0.02em;
-    transition: color 0.2s;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .list-item.struck .item-text {
-    color: var(--struck);
-    text-decoration: line-through;
-    text-decoration-color: var(--struck);
-  }
-
-  .del-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--border);
-    font-size: 13px;
-    padding: 10px 12px 10px 4px;
-    line-height: 1;
-    flex-shrink: 0;
-    transition: color 0.15s;
-  }
-
-  .list-item:hover .del-btn { color: var(--text-muted); }
-  .del-btn:hover { color: var(--red) !important; }
-
-  /* Add row */
-  .add-row {
-    display: flex;
-    border-top: 1px solid var(--border);
-    background: #fafaf8;
-  }
-
-  .add-input {
-    flex: 1;
-    background: none;
-    border: none;
-    outline: none;
-    padding: 10px 14px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    color: var(--text);
-    caret-color: var(--accent);
-  }
-
-  .add-input::placeholder { color: var(--border); }
-
-  .add-submit {
-    background: none;
-    border: none;
-    border-left: 1px solid var(--border);
-    padding: 0 14px;
-    cursor: pointer;
-    color: var(--accent);
-    font-size: 18px;
-    font-weight: 400;
-    line-height: 1;
-    transition: background 0.15s;
-  }
-
-  .add-submit:hover { background: #eff6ff; }
-
-  /* Footer actions */
-  .footer {
-    margin-top: 10px;
-    display: flex;
-    justify-content: flex-end;
-  }
-
-  .clear-btn {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: var(--text-muted);
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 4px 0;
-    transition: color 0.15s;
-  }
-
-  .clear-btn:hover { color: var(--red); }
-
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  .new-item { animation: fadeIn 0.2s ease; }
+@media print {
+  .screen-controls, .info-bar { display: none !important; }
+  body { background: #fff; }
+  .page-wrap { padding: 0; }
+  #a4page { box-shadow: none; }
+  .loading-overlay { display: none !important; }
+}
 </style>
 </head>
 <body>
-<div class="container">
-  <header>
-    <h1>Departments</h1>
-    <span class="counter" id="counter"></span>
-  </header>
 
-  <div class="card">
-    <ul class="list" id="list"></ul>
-    <div class="add-row">
-      <input class="add-input" id="addInput" type="text" placeholder="Add department…" maxlength="40" autocomplete="off" />
-      <button class="add-submit" onclick="addItem()" title="Add">+</button>
-    </div>
+<div class="screen-controls">
+  <div class="app-title">
+    &#8861; GM Action Monitoring System
+    <span class="sync-status sync-load" id="sync-badge">&#8987; Loading&hellip;</span>
   </div>
+  <div class="ctrl-group">
+    <select id="f-status" onchange="render()">
+      <option value="">All statuses</option>
+      <option value="Pending">Pending</option>
+      <option value="In Progress">In Progress</option>
+      <option value="Done">Done</option>
+      <option value="Delayed">Delayed</option>
+    </select>
+    <select id="f-pri" onchange="render()">
+      <option value="">All priorities</option>
+      <option value="High">High</option>
+      <option value="Medium">Medium</option>
+      <option value="Low">Low</option>
+    </select>
+    <input type="text" id="f-search" placeholder="Search&hellip;" oninput="render()" style="width:130px;">
+    <button class="btn btn-teal" onclick="loadSheet()">&#8635; Refresh</button>
+    <button class="btn btn-gold" id="btn-img" onclick="saveAsImage()">&#8659; Save as A4 Image</button>
+    <button class="btn btn-green" onclick="window.print()">Print</button>
+  </div>
+</div>
 
-  <div class="footer">
-    <button class="clear-btn" onclick="clearStruck()">Clear struck</button>
+<div class="info-bar">
+  &#128202; Live data from Google Sheet &nbsp;&middot;&nbsp;
+  Edit the sheet and click <strong>Refresh</strong> to update &nbsp;&middot;&nbsp;
+  Required headers in Row&nbsp;1:
+  <span class="sheet-hint">SNo &nbsp;|&nbsp; Description &nbsp;|&nbsp; Priority &nbsp;|&nbsp; Status &nbsp;|&nbsp; DueDate &nbsp;|&nbsp; Progress &nbsp;|&nbsp; Remarks</span>
+</div>
+
+<div class="page-wrap">
+  <div id="a4page">
+
+    <div class="loading-overlay" id="loading-overlay">
+      <div class="spinner"></div>
+      <div class="loading-text" id="loading-text">Fetching data from Google Sheet&hellip;</div>
+    </div>
+
+    <div class="rail-stripe"></div>
+
+    <div class="page-header">
+      <div>
+        <div class="org-name">Northern Railway &nbsp;&middot;&nbsp; General Manager's Secretariat</div>
+        <div class="doc-title">Action Item Register</div>
+        <div class="doc-subtitle">Civil Engineering Department &nbsp;|&nbsp; Pending Instructions &amp; Progress Report</div>
+      </div>
+      <div class="header-meta">
+        <strong>Prepared by:</strong> Secretary to GM<br>
+        <strong>Date:</strong> <span id="hdr-date"></span><br>
+        <strong>Last synced:</strong> <span id="hdr-sync">—</span><br>
+        <strong>Classification:</strong> Internal
+      </div>
+    </div>
+
+    <div class="summary-strip">
+      <div class="stat-box stat-total"><div class="stat-num" id="s-total">—</div><div class="stat-label">Total Items</div></div>
+      <div class="stat-box stat-done" ><div class="stat-num" id="s-done" >—</div><div class="stat-label">Completed</div></div>
+      <div class="stat-box stat-prog" ><div class="stat-num" id="s-prog" >—</div><div class="stat-label">In Progress</div></div>
+      <div class="stat-box stat-prog" ><div class="stat-num" id="s-pend" >—</div><div class="stat-label">Pending</div></div>
+      <div class="stat-box stat-delay"><div class="stat-num" id="s-delay">—</div><div class="stat-label">Delayed / Overdue</div></div>
+    </div>
+
+    <div class="table-wrap">
+      <div class="section-label">
+        <span>Instruction-wise Status</span>
+        <span id="filter-note" style="font-style:italic;"></span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th style="width:4%;">#</th>
+            <th style="width:35%;">Instruction / Work Item</th>
+            <th style="width:10%;">Priority</th>
+            <th style="width:12%;">Status</th>
+            <th style="width:11%;">Due Date</th>
+            <th style="width:13%;">Progress</th>
+            <th style="width:15%;">Remarks</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+
+    <div class="sig-section">
+      <div class="sig-block"><div class="sig-line">Prepared by</div><div class="sig-designation">Secretary to General Manager</div></div>
+      <div class="sig-block"><div class="sig-line">Checked by</div><div class="sig-designation">Dy. CE / Sr. DEN</div></div>
+      <div class="sig-block"><div class="sig-line">Noted by</div><div class="sig-designation">Chief Engineer</div></div>
+      <div class="sig-block"><div class="sig-line">General Manager</div><div class="sig-designation">Northern Railway</div></div>
+    </div>
+
+    <div class="page-footer">
+      NORTHERN RAILWAY &mdash; GENERAL MANAGER'S OFFICE &nbsp;&middot;&nbsp; ACTION MONITORING REGISTER &nbsp;&middot;&nbsp; CIVIL ENGINEERING
+    </div>
   </div>
 </div>
 
 <script>
-  const DEFAULTS = [
-    "MECHANICAL","ELECTRICAL","STORES","GENERAL",
-    "MEDICAL","VIGILANCE","RPF","PERSONNEL","ACCOUNTS"
-  ];
+const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQG1qIshT_3v5uE4D9OZi3QqIWvdVVYuku0IDg8DeH8jwdwkIrUAS41_1yqY_rAcIt7lO-0kPwdNhea/pub?gid=0&single=true&output=csv';
+// allorigins.win is a free CORS proxy - allows browsers to fetch Google Sheets CSV
+const PROXY = 'https://api.allorigins.win/raw?url=';
 
-  let items = JSON.parse(localStorage.getItem('cl_items') || 'null') || 
-    DEFAULTS.map((t, i) => ({ id: i+1, text: t, struck: false }));
-  let nextId = Math.max(...items.map(i => i.id)) + 1;
+let items = [];
 
-  function save() {
-    localStorage.setItem('cl_items', JSON.stringify(items));
+/* ── CSV parser (handles quoted fields) ── */
+function parseCSV(text) {
+  const lines = text.trim().split(/\r?\n/);
+  if (lines.length < 2) return [];
+  const headers = splitCSVLine(lines[0]);
+  return lines.slice(1)
+    .map(line => {
+      const cols = splitCSVLine(line);
+      const obj = {};
+      headers.forEach((h, i) => { obj[h] = (cols[i] || '').trim(); });
+      return obj;
+    })
+    .filter(r => r['Description'] && r['Description'].length > 0);
+}
+
+function splitCSVLine(line) {
+  const cols = []; let cur = '', inQ = false;
+  for (let i = 0; i < line.length; i++) {
+    if (line[i] === '"') { inQ = !inQ; }
+    else if (line[i] === ',' && !inQ) { cols.push(cur.replace(/^"|"$/g,'')); cur = ''; }
+    else { cur += line[i]; }
   }
+  cols.push(cur.replace(/^"|"$/g,''));
+  return cols.map(c => c.trim());
+}
 
-  function render() {
-    const list = document.getElementById('list');
-    const existing = {};
-    list.querySelectorAll('.list-item').forEach(el => {
-      existing[el.dataset.id] = el;
-    });
+/* ── Load from Google Sheet ── */
+async function loadSheet() {
+  setSyncBadge('load', 'Loading\u2026');
+  document.getElementById('loading-overlay').style.display = 'flex';
+  document.getElementById('loading-text').textContent = 'Fetching data from Google Sheet\u2026';
 
-    // Remove deleted
-    Object.keys(existing).forEach(id => {
-      if (!items.find(i => i.id == id)) existing[id].remove();
-    });
+  try {
+    const url = PROXY + encodeURIComponent(SHEET_URL + '&t=' + Date.now());
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const text = await res.text();
+    if (!text || text.length < 10) throw new Error('Empty response from sheet');
 
-    // Update/add
-    items.forEach((item, idx) => {
-      let el = existing[item.id];
-      if (!el) {
-        el = document.createElement('li');
-        el.className = 'list-item' + (item._new ? ' new-item' : '');
-        el.dataset.id = item.id;
-        el.innerHTML = `
-          <button class="item-btn" onclick="toggleStrike(${item.id})">
-            <span class="item-check"></span>
-            <span class="item-text">${item.text}</span>
-          </button>
-          <button class="del-btn" onclick="deleteItem(${item.id})" title="Remove">✕</button>
-        `;
-        list.appendChild(el);
-        delete item._new;
-      } else {
-        el.querySelector('.item-text').textContent = item.text;
-        el.querySelector('.item-btn').onclick = () => toggleStrike(item.id);
-        el.querySelector('.del-btn').onclick = () => deleteItem(item.id);
-      }
-      el.className = 'list-item' + (item.struck ? ' struck' : '');
-    });
+    const rows = parseCSV(text);
+    if (rows.length === 0) throw new Error('No data found. Check that Row 1 has the correct headers.');
 
-    updateCounter();
-  }
+    items = rows.map((r, i) => ({
+      id:     i + 1,
+      desc:   r['Description'] || '',
+      pri:    r['Priority']    || 'Medium',
+      status: r['Status']      || 'Pending',
+      due:    r['DueDate']     || '',
+      pct:    Math.min(100, Math.max(0, parseInt(r['Progress']) || 0)),
+      remark: r['Remarks']     || ''
+    }));
 
-  function updateCounter() {
-    const total = items.length;
-    const struck = items.filter(i => i.struck).length;
-    document.getElementById('counter').innerHTML =
-      struck ? `<em>${struck}</em> / ${total} done` : `${total} items`;
-  }
-
-  function toggleStrike(id) {
-    const item = items.find(i => i.id === id);
-    if (!item) return;
-    item.struck = !item.struck;
-    save();
-    const el = document.querySelector(`[data-id="${id}"]`);
-    if (el) {
-      el.classList.toggle('struck', item.struck);
-      const check = el.querySelector('.item-check');
-      if (check) check.textContent = item.struck ? '✓' : '';
-    }
-    updateCounter();
-  }
-
-  function deleteItem(id) {
-    const el = document.querySelector(`[data-id="${id}"]`);
-    if (el) {
-      el.style.transition = 'opacity 0.2s, transform 0.2s';
-      el.style.opacity = '0';
-      el.style.transform = 'translateX(20px)';
-      setTimeout(() => {
-        items = items.filter(i => i.id !== id);
-        save();
-        render();
-      }, 200);
-    }
-  }
-
-  function addItem() {
-    const input = document.getElementById('addInput');
-    const text = input.value.trim().toUpperCase();
-    if (!text) { input.focus(); return; }
-    items.push({ id: nextId++, text, struck: false, _new: true });
-    save();
+    const now = new Date().toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit'});
+    document.getElementById('hdr-sync').textContent = now + ' — ' + items.length + ' rows';
+    setSyncBadge('ok', '\u2713 Live \u2014 ' + items.length + ' rows');
     render();
-    input.value = '';
-    input.focus();
-  }
 
-  function clearStruck() {
-    items = items.filter(i => !i.struck);
-    save();
-    render();
+  } catch (err) {
+    setSyncBadge('err', '\u2717 ' + err.message);
+    document.getElementById('tbody').innerHTML =
+      `<tr><td colspan="7" class="empty-state">
+        <strong>Could not load data from Google Sheet.</strong><br><br>
+        <span style="font-size:11px;color:#666;">
+          Make sure the sheet is published:<br>
+          File &rarr; Share &rarr; Publish to web &rarr; Sheet1 &rarr; CSV &rarr; Publish<br><br>
+          Error detail: ${err.message}
+        </span>
+      </td></tr>`;
+    ['s-total','s-done','s-prog','s-pend','s-delay'].forEach(id => document.getElementById(id).textContent = '—');
+  } finally {
+    document.getElementById('loading-overlay').style.display = 'none';
   }
+}
 
-  document.getElementById('addInput').addEventListener('keydown', e => {
-    if (e.key === 'Enter') addItem();
+function setSyncBadge(type, text) {
+  const b = document.getElementById('sync-badge');
+  b.className = 'sync-status sync-' + type;
+  b.textContent = text;
+}
+
+/* ── Helpers ── */
+function isOverdue(i) { return i.status !== 'Done' && i.due && new Date(i.due) < new Date(); }
+function fmtDate(d) {
+  if (!d) return '\u2014';
+  const dt = new Date(d); if (isNaN(dt)) return d;
+  return dt.toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'});
+}
+function statusKey(s) { return s.replace(/\s+/g,'').toLowerCase(); }
+function priKey(p)    { return p.toLowerCase(); }
+function pctColor(item) {
+  if (item.status === 'Done')    return '#2d6a2d';
+  if (item.status === 'Delayed') return '#8b1a1a';
+  return '#003580';
+}
+
+/* ── Render ── */
+function render() {
+  document.getElementById('hdr-date').textContent =
+    new Date().toLocaleDateString('en-IN', {day:'2-digit', month:'long', year:'numeric'});
+
+  const sf = document.getElementById('f-status').value;
+  const pf = document.getElementById('f-pri').value;
+  const q  = document.getElementById('f-search').value.toLowerCase();
+
+  const filtered = items.filter(i => {
+    if (sf && i.status !== sf) return false;
+    if (pf && i.pri    !== pf) return false;
+    if (q  && !i.desc.toLowerCase().includes(q)) return false;
+    return true;
   });
 
-  render();
+  document.getElementById('s-total').textContent = items.length;
+  document.getElementById('s-done' ).textContent = items.filter(i => i.status === 'Done').length;
+  document.getElementById('s-prog' ).textContent = items.filter(i => i.status === 'In Progress').length;
+  document.getElementById('s-pend' ).textContent = items.filter(i => i.status === 'Pending').length;
+  document.getElementById('s-delay').textContent = items.filter(i => i.status === 'Delayed' || isOverdue(i)).length;
+
+  document.getElementById('filter-note').textContent =
+    (sf || pf || q) ? 'Filtered: showing ' + filtered.length + ' of ' + items.length + ' items' : '';
+
+  const tbody = document.getElementById('tbody');
+  if (filtered.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No items match the selected filters.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = filtered.map((item, idx) => {
+    const overdue  = isOverdue(item);
+    const dueCell  = overdue
+      ? '<span style="color:#8b1a1a;font-weight:500;">' + fmtDate(item.due) + '</span><span class="overdue-tag">\u25b2 Overdue</span>'
+      : fmtDate(item.due);
+    return '<tr class="' + (idx%2===1?'row-alt':'') + '">' +
+      '<td style="color:var(--ink-faint);font-size:10px;">' + (idx+1) + '</td>' +
+      '<td>' + item.desc + '</td>' +
+      '<td><span class="badge b-' + priKey(item.pri)    + '">' + item.pri    + '</span></td>' +
+      '<td><span class="badge b-' + statusKey(item.status) + '">' + item.status + '</span></td>' +
+      '<td style="font-size:10.5px;">' + dueCell + '</td>' +
+      '<td><span style="font-size:10.5px;font-weight:500;">' + item.pct + '%</span>' +
+        '<div class="pct-bar"><div class="pct-fill" style="width:' + item.pct + '%;background:' + pctColor(item) + ';"></div></div></td>' +
+      '<td style="font-size:10px;color:var(--ink-light);">' + (item.remark || '\u2014') + '</td>' +
+    '</tr>';
+  }).join('');
+}
+
+/* ── Save as image ── */
+function saveAsImage() {
+  const btn = document.getElementById('btn-img');
+  btn.textContent = 'Generating\u2026'; btn.disabled = true;
+  const page = document.getElementById('a4page');
+  html2canvas(page, {
+    scale: 2, useCORS: true, allowTaint: true,
+    backgroundColor: '#faf8f3',
+    width: page.offsetWidth,
+    height: page.scrollHeight,
+    ignoreElements: el => el.id === 'loading-overlay'
+  }).then(canvas => {
+    const link = document.createElement('a');
+    link.download = 'GM_Action_Register_Civil_' + new Date().toISOString().slice(0,10) + '.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    btn.textContent = '\u2659 Save as A4 Image'; btn.disabled = false;
+  }).catch(() => {
+    btn.textContent = '\u2659 Save as A4 Image'; btn.disabled = false;
+    alert('Image generation failed. Please try Print instead.');
+  });
+}
+
+/* ── Init ── */
+loadSheet();
 </script>
 </body>
 </html>
