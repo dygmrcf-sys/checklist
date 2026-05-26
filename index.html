@@ -18,7 +18,6 @@
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'DM Sans', sans-serif; background: #e8e4da; min-height: 100vh; color: var(--ink); }
-
 .screen-controls {
   background: var(--rail-blue); padding: 10px 28px;
   display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
@@ -48,7 +47,6 @@ body { font-family: 'DM Sans', sans-serif; background: #e8e4da; min-height: 100v
 .btn-outline { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.5); }
 .btn-green   { background: #2d6a2d; color: #fff; }
 .btn-teal    { background: #0f766e; color: #fff; }
-
 .info-bar {
   background: #e8eef8; border-bottom: 1px solid #c5d4ef;
   padding: 7px 28px; font-size: 12px; color: var(--blue);
@@ -59,7 +57,6 @@ body { font-family: 'DM Sans', sans-serif; background: #e8e4da; min-height: 100v
   background: #fff; border: 1px solid #c5d4ef; border-radius: 4px;
   padding: 2px 8px; font-family: monospace; font-size: 11px; color: #333;
 }
-
 .page-wrap { display: flex; justify-content: center; padding: 28px 16px 60px; }
 #a4page {
   width: 794px; min-height: 1123px;
@@ -67,14 +64,12 @@ body { font-family: 'DM Sans', sans-serif; background: #e8e4da; min-height: 100v
   box-shadow: 0 4px 40px rgba(0,0,0,0.18);
 }
 .rail-stripe { height: 6px; background: linear-gradient(90deg, var(--rail-blue) 0%, var(--rail-blue) 70%, var(--rail-gold) 70%, var(--rail-gold) 85%, var(--rail-red) 85%, var(--rail-red) 100%); }
-
 .page-header { padding: 20px 36px 14px; border-bottom: 0.5px solid var(--border); display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
 .org-name { font-family: 'EB Garamond', serif; font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--rail-blue); margin-bottom: 4px; }
 .doc-title { font-family: 'EB Garamond', serif; font-size: 26px; font-weight: 500; color: var(--ink); line-height: 1.15; }
 .doc-subtitle { font-size: 12px; color: var(--ink-light); margin-top: 3px; }
 .header-meta { font-size: 11px; color: var(--ink-faint); line-height: 1.9; text-align: right; }
 .header-meta strong { color: var(--ink-light); }
-
 .summary-strip { display: flex; padding: 10px 36px; border-bottom: 0.5px solid var(--border); background: #f0ece0; }
 .stat-box { flex: 1; text-align: center; padding: 7px 4px; border-right: 0.5px solid var(--border); }
 .stat-box:last-child { border-right: none; }
@@ -84,7 +79,6 @@ body { font-family: 'DM Sans', sans-serif; background: #e8e4da; min-height: 100v
 .stat-done  .stat-num { color: var(--green); }
 .stat-prog  .stat-num { color: var(--amber); }
 .stat-delay .stat-num { color: var(--red); }
-
 .table-wrap { padding: 0 36px 20px; }
 .section-label {
   font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint);
@@ -96,7 +90,6 @@ th { font-size: 9px; font-weight: 500; letter-spacing: 0.1em; text-transform: up
 td { font-size: 11px; padding: 7px 6px 7px 0; border-bottom: 0.5px solid var(--border); vertical-align: top; color: var(--ink); line-height: 1.4; }
 tr:last-child td { border-bottom: none; }
 tr.row-alt td { background: rgba(0,0,0,0.018); }
-
 .badge { display: inline-block; font-size: 9px; font-weight: 500; padding: 2px 7px; border-radius: 2px; letter-spacing: 0.04em; white-space: nowrap; }
 .b-pending    { background: var(--amber-bg); color: var(--amber); }
 .b-inprogress { background: var(--blue-bg);  color: var(--blue); }
@@ -105,11 +98,9 @@ tr.row-alt td { background: rgba(0,0,0,0.018); }
 .b-high       { background: var(--red-bg);   color: var(--red); border: 0.5px solid var(--red); }
 .b-medium     { background: var(--amber-bg); color: var(--amber); }
 .b-low        { background: var(--green-bg); color: var(--green); }
-
 .pct-bar  { height: 4px; border-radius: 2px; background: #e0ddd5; margin-top: 3px; overflow: hidden; width: 60px; }
 .pct-fill { height: 100%; border-radius: 2px; }
 .overdue-tag { font-size: 9px; color: var(--red); display: block; }
-
 .loading-overlay {
   position: absolute; inset: 0; background: rgba(250,248,243,0.9);
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; z-index: 10;
@@ -118,13 +109,11 @@ tr.row-alt td { background: rgba(0,0,0,0.018); }
 @keyframes spin { to { transform: rotate(360deg); } }
 .loading-text { font-size: 13px; color: var(--ink-light); }
 .empty-state { text-align: center; padding: 40px 0; color: var(--ink-faint); font-size: 13px; }
-
 .sig-section { padding: 18px 36px 24px; border-top: 0.5px solid var(--border); margin-top: 8px; display: flex; justify-content: space-between; align-items: flex-end; }
 .sig-block { text-align: center; min-width: 140px; }
 .sig-line { border-top: 0.5px solid var(--ink); padding-top: 6px; font-size: 10px; color: var(--ink-light); margin-top: 36px; letter-spacing: 0.04em; }
 .sig-designation { font-size: 9px; color: var(--ink-faint); margin-top: 2px; }
 .page-footer { text-align: center; font-size: 9px; color: var(--ink-faint); padding: 10px 36px 14px; letter-spacing: 0.06em; border-top: 0.5px solid var(--border); }
-
 @media print {
   .screen-controls, .info-bar { display: none !important; }
   body { background: #fff; }
@@ -163,7 +152,7 @@ tr.row-alt td { background: rgba(0,0,0,0.018); }
 </div>
 
 <div class="info-bar">
-  &#128202; Live data from Google Sheet (CSV) &nbsp;&middot;&nbsp;
+  &#128202; Live data from Google Sheet &nbsp;&middot;&nbsp;
   Edit the sheet and click <strong>Refresh</strong> to update &nbsp;&middot;&nbsp;
   Required headers in Row&nbsp;1:
   <span class="sheet-hint">SNo &nbsp;|&nbsp; Description &nbsp;|&nbsp; Priority &nbsp;|&nbsp; Status &nbsp;|&nbsp; DueDate &nbsp;|&nbsp; Progress &nbsp;|&nbsp; Remarks</span>
@@ -171,14 +160,11 @@ tr.row-alt td { background: rgba(0,0,0,0.018); }
 
 <div class="page-wrap">
   <div id="a4page">
-
     <div class="loading-overlay" id="loading-overlay">
       <div class="spinner"></div>
       <div class="loading-text" id="loading-text">Fetching data from Google Sheet&hellip;</div>
     </div>
-
     <div class="rail-stripe"></div>
-
     <div class="page-header">
       <div>
         <div class="org-name">Northern Railway &nbsp;&middot;&nbsp; General Manager's Secretariat</div>
@@ -192,7 +178,6 @@ tr.row-alt td { background: rgba(0,0,0,0.018); }
         <strong>Classification:</strong> Internal
       </div>
     </div>
-
     <div class="summary-strip">
       <div class="stat-box stat-total"><div class="stat-num" id="s-total">—</div><div class="stat-label">Total Items</div></div>
       <div class="stat-box stat-done" ><div class="stat-num" id="s-done" >—</div><div class="stat-label">Completed</div></div>
@@ -200,7 +185,6 @@ tr.row-alt td { background: rgba(0,0,0,0.018); }
       <div class="stat-box stat-prog" ><div class="stat-num" id="s-pend" >—</div><div class="stat-label">Pending</div></div>
       <div class="stat-box stat-delay"><div class="stat-num" id="s-delay">—</div><div class="stat-label">Delayed / Overdue</div></div>
     </div>
-
     <div class="table-wrap">
       <div class="section-label">
         <span>Instruction-wise Status</span>
@@ -221,14 +205,12 @@ tr.row-alt td { background: rgba(0,0,0,0.018); }
         <tbody id="tbody"></tbody>
       </table>
     </div>
-
     <div class="sig-section">
       <div class="sig-block"><div class="sig-line">Prepared by</div><div class="sig-designation">Secretary to General Manager</div></div>
       <div class="sig-block"><div class="sig-line">Checked by</div><div class="sig-designation">Dy. CE / Sr. DEN</div></div>
       <div class="sig-block"><div class="sig-line">Noted by</div><div class="sig-designation">Chief Engineer</div></div>
       <div class="sig-block"><div class="sig-line">General Manager</div><div class="sig-designation">Northern Railway</div></div>
     </div>
-
     <div class="page-footer">
       NORTHERN RAILWAY &mdash; GENERAL MANAGER'S OFFICE &nbsp;&middot;&nbsp; ACTION MONITORING REGISTER &nbsp;&middot;&nbsp; CIVIL ENGINEERING
     </div>
@@ -236,117 +218,142 @@ tr.row-alt td { background: rgba(0,0,0,0.018); }
 </div>
 
 <script>
-const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQG1qIshT_3v5uE4D9OZi3QqIWvdVVYuku0IDg8DeH8jwdwkIrUAS41_1yqY_rAcIt7lO-0kPwdNhea/pub?gid=0&single=true&output=csv';
+// The published key from the /e/ segment of your pub URL
+const PUBLISHED_KEY = '2PACX-1vQG1qIshT_3v5uE4D9OZi3QqIWvdVVYuku0IDg8DeH8jwdwkIrUAS41_1yqY_rAcIt7lO-0kPwdNhea';
+const SHEET_GID = '0';
 
 let items = [];
 
-/* ── CSV parser (handles quoted fields with commas/newlines) ── */
-function parseCSV(text) {
-  const rows = [];
-  let row = [], field = '', inQ = false;
-  for (let i = 0; i < text.length; i++) {
-    const ch = text[i], next = text[i+1];
-    if (inQ) {
-      if (ch === '"' && next === '"') { field += '"'; i++; }
-      else if (ch === '"') { inQ = false; }
-      else { field += ch; }
-    } else {
-      if (ch === '"') { inQ = true; }
-      else if (ch === ',') { row.push(field.trim()); field = ''; }
-      else if (ch === '\r' && next === '\n') { row.push(field.trim()); rows.push(row); row = []; field = ''; i++; }
-      else if (ch === '\n' || ch === '\r') { row.push(field.trim()); rows.push(row); row = []; field = ''; }
-      else { field += ch; }
-    }
-  }
-  if (field || row.length) { row.push(field.trim()); rows.push(row); }
-  return rows.filter(r => r.some(c => c !== ''));
-}
-
-/* ── Fetch published CSV ── */
-async function loadSheet() {
+/* ── Load via Google gviz JSONP (works cross-origin from browsers) ── */
+function loadSheet() {
   setSyncBadge('load', '\u29d6 Loading\u2026');
   document.getElementById('loading-overlay').style.display = 'flex';
   document.getElementById('loading-text').textContent = 'Fetching data from Google Sheet\u2026';
 
-  try {
-    /* Cache-bust so Refresh always gets fresh data */
-    const res = await fetch(CSV_URL + '&cachebust=' + Date.now(), {
-      cache: 'no-store'
-    });
-    if (!res.ok) throw new Error('HTTP ' + res.status + ' — sheet may not be published.');
+  const old = document.getElementById('gviz-script');
+  if (old) old.remove();
 
-    const text = await res.text();
-    const rows = parseCSV(text);
-    if (rows.length < 2) throw new Error('Sheet returned no data rows. Is it published correctly?');
+  const cbName = '__gvizCb' + Date.now();
 
-    /* Build column index from header row */
-    const headers = rows[0].map(h => h.trim());
-    const col = (name) => {
-      const i = headers.findIndex(h => h.toLowerCase() === name.toLowerCase());
-      return i;
-    };
+  const timer = setTimeout(function() {
+    if (window[cbName]) {
+      delete window[cbName];
+      document.getElementById('loading-overlay').style.display = 'none';
+      showSheetError('Request timed out after 15s. Check your internet connection and that the sheet is published to web.');
+    }
+  }, 15000);
 
-    const iDesc  = col('Description');
-    const iPri   = col('Priority');
-    const iStat  = col('Status');
-    const iDue   = col('DueDate');
-    const iPct   = col('Progress');
-    const iRem   = col('Remarks');
-
-    const missing = [['Description',iDesc],['Priority',iPri],['Status',iStat],['DueDate',iDue],['Progress',iPct],['Remarks',iRem]]
-      .filter(([,i]) => i === -1).map(([n]) => n);
-    if (missing.length) throw new Error('Missing columns: ' + missing.join(', ') + '. Check Row 1 headers.');
-
-    items = rows.slice(1)
-      .filter(r => r[iDesc] && r[iDesc].trim())
-      .map((r, i) => ({
-        id:     i + 1,
-        desc:   r[iDesc]  || '',
-        pri:    (r[iPri]  || 'Medium').trim(),
-        status: (r[iStat] || 'Pending').trim(),
-        due:    (r[iDue]  || '').trim(),
-        pct:    Math.min(100, Math.max(0, parseInt(r[iPct]) || 0)),
-        remark: (r[iRem]  || '').trim()
-      }));
-
-    if (items.length === 0) throw new Error('Sheet has headers but no data rows with a Description.');
-
-    const now = new Date().toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit'});
-    document.getElementById('hdr-sync').textContent = now + ' \u2014 ' + items.length + ' rows';
-    setSyncBadge('ok', '\u2713 Live \u2014 ' + items.length + ' rows');
-    render();
-
-  } catch(err) {
-    showSheetError(err.message);
-  } finally {
+  window[cbName] = function(resp) {
+    clearTimeout(timer);
     document.getElementById('loading-overlay').style.display = 'none';
-  }
+    try {
+      if (!resp || !resp.table) throw new Error('Empty response from Google. Is the sheet published to web?');
+      var tbl = resp.table;
+      if (!tbl.cols || tbl.cols.length === 0) throw new Error('No columns found. Ensure sheet is published correctly.');
+
+      // Build column name → index map (case-insensitive)
+      var colIdx = {};
+      tbl.cols.forEach(function(c, i) {
+        if (c.label) colIdx[c.label.trim().toLowerCase()] = i;
+      });
+
+      // Debug: log what columns we found
+      console.log('Columns found:', Object.keys(colIdx));
+
+      // Required column names (lowercase)
+      var needed = {
+        desc:   ['description'],
+        pri:    ['priority'],
+        status: ['status'],
+        due:    ['duedate', 'due date', 'due_date'],
+        pct:    ['progress', 'progress %', 'progress%'],
+        remark: ['remarks', 'remark']
+      };
+
+      var idx = {};
+      var missing = [];
+      Object.keys(needed).forEach(function(key) {
+        var found = -1;
+        needed[key].forEach(function(alias) {
+          if (found === -1 && colIdx[alias] !== undefined) found = colIdx[alias];
+        });
+        if (found === -1) missing.push(needed[key][0]);
+        else idx[key] = found;
+      });
+
+      if (missing.length > 0) {
+        var allCols = Object.keys(colIdx).join(', ');
+        throw new Error('Missing columns: ' + missing.join(', ') + '.\nSheet has: ' + allCols + '\nCheck Row 1 header spelling.');
+      }
+
+      items = (tbl.rows || [])
+        .filter(function(r) { return r.c && r.c[idx.desc] && r.c[idx.desc].v != null && String(r.c[idx.desc].v).trim() !== ''; })
+        .map(function(r, i) {
+          function cell(k) { var c = r.c[idx[k]]; return (c && c.v != null) ? String(c.v).trim() : ''; }
+          return {
+            id:     i + 1,
+            desc:   cell('desc'),
+            pri:    cell('pri')    || 'Medium',
+            status: cell('status') || 'Pending',
+            due:    cell('due'),
+            pct:    Math.min(100, Math.max(0, parseInt(cell('pct')) || 0)),
+            remark: cell('remark')
+          };
+        });
+
+      if (items.length === 0) throw new Error('Sheet has headers but no data rows with a Description value.');
+
+      var now = new Date().toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit'});
+      document.getElementById('hdr-sync').textContent = now + ' \u2014 ' + items.length + ' rows';
+      setSyncBadge('ok', '\u2713 Live \u2014 ' + items.length + ' rows');
+      render();
+
+    } catch(err) {
+      showSheetError(err.message);
+    } finally {
+      delete window[cbName];
+    }
+  };
+
+  var script = document.createElement('script');
+  script.id = 'gviz-script';
+  // tqx=out:json with responseHandler — correct gviz JSONP format
+  script.src = 'https://docs.google.com/spreadsheets/d/e/' + PUBLISHED_KEY
+             + '/gviz/tq?tqx=out:json;responseHandler:' + cbName
+             + '&gid=' + SHEET_GID
+             + '&t=' + Date.now();
+  script.onerror = function() {
+    clearTimeout(timer);
+    delete window[cbName];
+    document.getElementById('loading-overlay').style.display = 'none';
+    showSheetError('Script load failed. Check internet connection or try opening the sheet URL directly in a browser tab.');
+  };
+  document.head.appendChild(script);
 }
 
 function showSheetError(msg) {
   setSyncBadge('err', '\u2717 Error');
   document.getElementById('tbody').innerHTML =
     '<tr><td colspan="7" class="empty-state">' +
-      '<strong>Could not load data from Google Sheet.</strong><br><br>' +
-      '<span style="font-size:11px;color:#666;">' + msg + '<br><br>' +
-      'Ensure the sheet is published: File \u2192 Share \u2192 Publish to web \u2192 Sheet1 \u2192 CSV \u2192 Publish' +
-      '</span></td></tr>';
-  ['s-total','s-done','s-prog','s-pend','s-delay'].forEach(id => {
+      '<strong style="color:#8b1a1a;">Could not load data from Google Sheet.</strong><br><br>' +
+      '<span style="font-size:11px;color:#555;white-space:pre-wrap;">' + msg + '</span><br><br>' +
+      '<span style="font-size:10px;color:#888;">To publish: File \u2192 Share \u2192 Publish to web \u2192 select your sheet \u2192 Web page \u2192 Publish</span>' +
+    '</td></tr>';
+  ['s-total','s-done','s-prog','s-pend','s-delay'].forEach(function(id) {
     document.getElementById(id).textContent = '\u2014';
   });
 }
 
 function setSyncBadge(type, text) {
-  const b = document.getElementById('sync-badge');
+  var b = document.getElementById('sync-badge');
   b.className = 'sync-status sync-' + type;
   b.textContent = text;
 }
 
-/* ── Helpers ── */
 function isOverdue(i) { return i.status !== 'Done' && i.due && new Date(i.due) < new Date(); }
 function fmtDate(d) {
   if (!d) return '\u2014';
-  const dt = new Date(d); if (isNaN(dt)) return d;
+  var dt = new Date(d); if (isNaN(dt)) return d;
   return dt.toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'});
 }
 function statusKey(s) { return s.replace(/\s+/g,'').toLowerCase(); }
@@ -357,81 +364,76 @@ function pctColor(item) {
   return '#003580';
 }
 
-/* ── Render ── */
 function render() {
   document.getElementById('hdr-date').textContent =
     new Date().toLocaleDateString('en-IN', {day:'2-digit', month:'long', year:'numeric'});
 
-  const sf = document.getElementById('f-status').value;
-  const pf = document.getElementById('f-pri').value;
-  const q  = document.getElementById('f-search').value.toLowerCase();
+  var sf = document.getElementById('f-status').value;
+  var pf = document.getElementById('f-pri').value;
+  var q  = document.getElementById('f-search').value.toLowerCase();
+  var priOrder = { 'High': 1, 'Medium': 2, 'Low': 3 };
 
-  const priOrder = { 'High': 1, 'Medium': 2, 'Low': 3 };
-
-  const filtered = items.filter(i => {
+  var filtered = items.filter(function(i) {
     if (sf && i.status !== sf) return false;
     if (pf && i.pri    !== pf) return false;
     if (q  && !i.desc.toLowerCase().includes(q)) return false;
     return true;
-  }).sort((a, b) => (priOrder[a.pri] || 9) - (priOrder[b.pri] || 9));
+  }).sort(function(a, b) { return (priOrder[a.pri]||9) - (priOrder[b.pri]||9); });
 
   document.getElementById('s-total').textContent = items.length;
-  document.getElementById('s-done' ).textContent = items.filter(i => i.status === 'Done').length;
-  document.getElementById('s-prog' ).textContent = items.filter(i => i.status === 'In Progress').length;
-  document.getElementById('s-pend' ).textContent = items.filter(i => i.status === 'Pending').length;
-  document.getElementById('s-delay').textContent = items.filter(i => i.status === 'Delayed' || isOverdue(i)).length;
+  document.getElementById('s-done' ).textContent = items.filter(function(i){ return i.status==='Done'; }).length;
+  document.getElementById('s-prog' ).textContent = items.filter(function(i){ return i.status==='In Progress'; }).length;
+  document.getElementById('s-pend' ).textContent = items.filter(function(i){ return i.status==='Pending'; }).length;
+  document.getElementById('s-delay').textContent = items.filter(function(i){ return i.status==='Delayed' || isOverdue(i); }).length;
 
   document.getElementById('filter-note').textContent =
     (sf || pf || q) ? 'Filtered: showing ' + filtered.length + ' of ' + items.length + ' items' : '';
 
-  const tbody = document.getElementById('tbody');
+  var tbody = document.getElementById('tbody');
   if (filtered.length === 0) {
     tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No items match the selected filters.</td></tr>';
     return;
   }
 
-  tbody.innerHTML = filtered.map((item, idx) => {
-    const overdue  = isOverdue(item);
-    const dueCell  = overdue
+  tbody.innerHTML = filtered.map(function(item, idx) {
+    var overdue = isOverdue(item);
+    var dueCell = overdue
       ? '<span style="color:#8b1a1a;font-weight:500;">' + fmtDate(item.due) + '</span><span class="overdue-tag">\u25b2 Overdue</span>'
       : fmtDate(item.due);
     return '<tr class="' + (idx%2===1?'row-alt':'') + '">' +
       '<td style="color:var(--ink-faint);font-size:10px;">' + (idx+1) + '</td>' +
       '<td>' + item.desc + '</td>' +
-      '<td><span class="badge b-' + priKey(item.pri)       + '">' + item.pri    + '</span></td>' +
+      '<td><span class="badge b-' + priKey(item.pri) + '">' + item.pri + '</span></td>' +
       '<td><span class="badge b-' + statusKey(item.status) + '">' + item.status + '</span></td>' +
       '<td style="font-size:10.5px;">' + dueCell + '</td>' +
       '<td><span style="font-size:10.5px;font-weight:500;">' + item.pct + '%</span>' +
         '<div class="pct-bar"><div class="pct-fill" style="width:' + item.pct + '%;background:' + pctColor(item) + ';"></div></div></td>' +
-      '<td style="font-size:10px;color:var(--ink-light);">' + (item.remark || '\u2014') + '</td>' +
+      '<td style="font-size:10px;color:var(--ink-light);">' + (item.remark||'\u2014') + '</td>' +
     '</tr>';
   }).join('');
 }
 
-/* ── Save as image ── */
 function saveAsImage() {
-  const btn = document.getElementById('btn-img');
+  var btn = document.getElementById('btn-img');
   btn.textContent = 'Generating\u2026'; btn.disabled = true;
-  const page = document.getElementById('a4page');
+  var page = document.getElementById('a4page');
   html2canvas(page, {
     scale: 2, useCORS: true, allowTaint: true,
     backgroundColor: '#faf8f3',
-    width: page.offsetWidth,
-    height: page.scrollHeight,
-    ignoreElements: el => el.id === 'loading-overlay'
-  }).then(canvas => {
-    const link = document.createElement('a');
+    width: page.offsetWidth, height: page.scrollHeight,
+    ignoreElements: function(el){ return el.id === 'loading-overlay'; }
+  }).then(function(canvas) {
+    var link = document.createElement('a');
     link.download = 'GM_Action_Register_Civil_' + new Date().toISOString().slice(0,10) + '.png';
     link.href = canvas.toDataURL('image/png');
     link.click();
     btn.textContent = '\u2659 Save as A4 Image'; btn.disabled = false;
-  }).catch(() => {
+  }).catch(function() {
     btn.textContent = '\u2659 Save as A4 Image'; btn.disabled = false;
     alert('Image generation failed. Please try Print instead.');
   });
 }
 
-/* ── Init ── */
 loadSheet();
 </script>
 </body>
