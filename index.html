@@ -163,7 +163,7 @@ tr.row-alt td { background: rgba(0,0,0,0.018); }
 </div>
 
 <div class="info-bar">
-  &#128202; Live data from Google Sheet (direct &mdash; no proxy) &nbsp;&middot;&nbsp;
+  &#128202; Live data from Google Sheet (CSV) &nbsp;&middot;&nbsp;
   Edit the sheet and click <strong>Refresh</strong> to update &nbsp;&middot;&nbsp;
   Required headers in Row&nbsp;1:
   <span class="sheet-hint">SNo &nbsp;|&nbsp; Description &nbsp;|&nbsp; Priority &nbsp;|&nbsp; Status &nbsp;|&nbsp; DueDate &nbsp;|&nbsp; Progress &nbsp;|&nbsp; Remarks</span>
@@ -236,94 +236,91 @@ tr.row-alt td { background: rgba(0,0,0,0.018); }
 </div>
 
 <script>
-// Published spreadsheet key (the long ID from your pub URL)
-const SHEET_KEY = '2PACX-1vQG1qIshT_3v5uE4D9OZi3QqIWvdVVYuku0IDg8DeH8jwdwkIrUAS41_1yqY_rAcIt7lO-0kPwdNhea';
-const SHEET_GID = '0';
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQG1qIshT_3v5uE4D9OZi3QqIWvdVVYuku0IDg8DeH8jwdwkIrUAS41_1yqY_rAcIt7lO-0kPwdNhea/pub?gid=0&single=true&output=csv';
 
 let items = [];
 
-/* ── Load via Google gviz JSONP — no CORS proxy needed ── */
-function loadSheet() {
-  setSyncBadge('load', 'Loading\u2026');
+/* ── CSV parser (handles quoted fields with commas/newlines) ── */
+function parseCSV(text) {
+  const rows = [];
+  let row = [], field = '', inQ = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i], next = text[i+1];
+    if (inQ) {
+      if (ch === '"' && next === '"') { field += '"'; i++; }
+      else if (ch === '"') { inQ = false; }
+      else { field += ch; }
+    } else {
+      if (ch === '"') { inQ = true; }
+      else if (ch === ',') { row.push(field.trim()); field = ''; }
+      else if (ch === '\r' && next === '\n') { row.push(field.trim()); rows.push(row); row = []; field = ''; i++; }
+      else if (ch === '\n' || ch === '\r') { row.push(field.trim()); rows.push(row); row = []; field = ''; }
+      else { field += ch; }
+    }
+  }
+  if (field || row.length) { row.push(field.trim()); rows.push(row); }
+  return rows.filter(r => r.some(c => c !== ''));
+}
+
+/* ── Fetch published CSV ── */
+async function loadSheet() {
+  setSyncBadge('load', '\u29d6 Loading\u2026');
   document.getElementById('loading-overlay').style.display = 'flex';
   document.getElementById('loading-text').textContent = 'Fetching data from Google Sheet\u2026';
 
-  // Remove any previous script tag
-  const old = document.getElementById('gviz-script');
-  if (old) old.remove();
+  try {
+    /* Cache-bust so Refresh always gets fresh data */
+    const res = await fetch(CSV_URL + '&cachebust=' + Date.now(), {
+      cache: 'no-store'
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status + ' — sheet may not be published.');
 
-  // Unique callback name to avoid collisions on refresh
-  const cbName = 'gvizCb_' + Date.now();
+    const text = await res.text();
+    const rows = parseCSV(text);
+    if (rows.length < 2) throw new Error('Sheet returned no data rows. Is it published correctly?');
 
-  window[cbName] = function(response) {
-    try {
-      const table = response.table;
-      if (!table || !table.cols || table.cols.length === 0)
-        throw new Error('Sheet returned no columns. Check it is published correctly.');
+    /* Build column index from header row */
+    const headers = rows[0].map(h => h.trim());
+    const col = (name) => {
+      const i = headers.findIndex(h => h.toLowerCase() === name.toLowerCase());
+      return i;
+    };
 
-      // Map column labels → indices
-      const colIdx = {};
-      table.cols.forEach((c, i) => { if (c.label) colIdx[c.label.trim()] = i; });
+    const iDesc  = col('Description');
+    const iPri   = col('Priority');
+    const iStat  = col('Status');
+    const iDue   = col('DueDate');
+    const iPct   = col('Progress');
+    const iRem   = col('Remarks');
 
-      const required = ['Description','Priority','Status','DueDate','Progress','Remarks'];
-      const missing  = required.filter(h => colIdx[h] === undefined);
-      if (missing.length > 0)
-        throw new Error('Missing columns: ' + missing.join(', ') + '. Check Row 1 headers in your sheet.');
+    const missing = [['Description',iDesc],['Priority',iPri],['Status',iStat],['DueDate',iDue],['Progress',iPct],['Remarks',iRem]]
+      .filter(([,i]) => i === -1).map(([n]) => n);
+    if (missing.length) throw new Error('Missing columns: ' + missing.join(', ') + '. Check Row 1 headers.');
 
-      items = (table.rows || [])
-        .filter(r => r.c && r.c[colIdx['Description']] && r.c[colIdx['Description']].v)
-        .map((r, i) => {
-          const cell = (col) => { const c = r.c[colIdx[col]]; return c && c.v != null ? String(c.v).trim() : ''; };
-          return {
-            id:     i + 1,
-            desc:   cell('Description'),
-            pri:    cell('Priority')  || 'Medium',
-            status: cell('Status')    || 'Pending',
-            due:    cell('DueDate'),
-            pct:    Math.min(100, Math.max(0, parseInt(cell('Progress')) || 0)),
-            remark: cell('Remarks')
-          };
-        });
+    items = rows.slice(1)
+      .filter(r => r[iDesc] && r[iDesc].trim())
+      .map((r, i) => ({
+        id:     i + 1,
+        desc:   r[iDesc]  || '',
+        pri:    (r[iPri]  || 'Medium').trim(),
+        status: (r[iStat] || 'Pending').trim(),
+        due:    (r[iDue]  || '').trim(),
+        pct:    Math.min(100, Math.max(0, parseInt(r[iPct]) || 0)),
+        remark: (r[iRem]  || '').trim()
+      }));
 
-      if (items.length === 0)
-        throw new Error('Sheet has headers but no data rows.');
+    if (items.length === 0) throw new Error('Sheet has headers but no data rows with a Description.');
 
-      const now = new Date().toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit'});
-      document.getElementById('hdr-sync').textContent = now + ' \u2014 ' + items.length + ' rows';
-      setSyncBadge('ok', '\u2713 Live \u2014 ' + items.length + ' rows');
-      render();
+    const now = new Date().toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit'});
+    document.getElementById('hdr-sync').textContent = now + ' \u2014 ' + items.length + ' rows';
+    setSyncBadge('ok', '\u2713 Live \u2014 ' + items.length + ' rows');
+    render();
 
-    } catch(err) {
-      showSheetError(err.message);
-    } finally {
-      document.getElementById('loading-overlay').style.display = 'none';
-      delete window[cbName];
-    }
-  };
-
-  // Timeout in case the script never loads
-  const timer = setTimeout(() => {
-    if (window[cbName]) {
-      delete window[cbName];
-      document.getElementById('loading-overlay').style.display = 'none';
-      showSheetError('Request timed out. Check your internet connection and that the sheet is published.');
-    }
-  }, 12000);
-
-  // Inject JSONP script tag — Google gviz allows this cross-origin
-  const script = document.createElement('script');
-  script.id  = 'gviz-script';
-  script.src = 'https://docs.google.com/spreadsheets/d/e/' + SHEET_KEY +
-               '/gviz/tq?tqx=out:json;responseHandler:' + cbName +
-               '&gid=' + SHEET_GID + '&t=' + Date.now();
-  script.onerror = () => {
-    clearTimeout(timer);
-    delete window[cbName];
+  } catch(err) {
+    showSheetError(err.message);
+  } finally {
     document.getElementById('loading-overlay').style.display = 'none';
-    showSheetError('Could not reach Google Sheets. Are you connected to the internet?');
-  };
-  script.onload = () => clearTimeout(timer);
-  document.head.appendChild(script);
+  }
 }
 
 function showSheetError(msg) {
@@ -401,7 +398,7 @@ function render() {
     return '<tr class="' + (idx%2===1?'row-alt':'') + '">' +
       '<td style="color:var(--ink-faint);font-size:10px;">' + (idx+1) + '</td>' +
       '<td>' + item.desc + '</td>' +
-      '<td><span class="badge b-' + priKey(item.pri)    + '">' + item.pri    + '</span></td>' +
+      '<td><span class="badge b-' + priKey(item.pri)       + '">' + item.pri    + '</span></td>' +
       '<td><span class="badge b-' + statusKey(item.status) + '">' + item.status + '</span></td>' +
       '<td style="font-size:10.5px;">' + dueCell + '</td>' +
       '<td><span style="font-size:10.5px;font-weight:500;">' + item.pct + '%</span>' +
